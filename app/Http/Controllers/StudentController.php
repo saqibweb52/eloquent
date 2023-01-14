@@ -4,8 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Student;
+use App\Repositories\EloquentRepositories;
 class StudentController extends Controller
 {
+
+    protected $EloquentRepositories;
+
+    public function __construct(EloquentRepositories $EloquentRepositories){
+
+        $this->EloquentRepositories = $EloquentRepositories;
+
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +24,7 @@ class StudentController extends Controller
     public function index()
     {
 
-        $students = student::all();
+        $students = $this->EloquentRepositories->all();
         return view('insertmarks',['students'=>$students]);
 
     }
@@ -26,13 +36,7 @@ class StudentController extends Controller
      */
     public function create(Request $request)
     {
-        $student = new Student;
-
-        $student->name = $request->name;
-        $student->city = $request->city;
-        $student->marks = $request->marks;
-        $student->email = 'null';
-        $student->save();
+        $this->EloquentRepositories->create($request->all());
 
         return redirect(route('insertmarks'));
     }
@@ -57,6 +61,7 @@ class StudentController extends Controller
     public function show($id)
     {
         //
+        
     }
 
     /**
@@ -80,12 +85,8 @@ class StudentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $student = Student::find($id);
-        $student->name = $request->name;
-        $student->city = $request->city;
-        $student->marks = $request->marks;
-        $student->email = 'null';
-        $student->save();
+        $this->EloquentRepositories->create($request->all(), $id);
+        
 
         return redirect(route('insertmarks'));
     }
@@ -98,7 +99,8 @@ class StudentController extends Controller
      */
     public function destroy($id)
     {
-        $student = Student::delete($id);
+        $this->EloquentRepositories->delete($id);
+
      
 
         return redirect(route('insertmarks'));
